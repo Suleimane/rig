@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Funcionários</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{gerenteBean.listarGerentes}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Funcionáros" outcome="funcionarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li class="active"><h:link value="Gerentes"
+								outcome="gerentes" style="background: #00796b;" /></li>
+						<li><h:link value="Supervisores" outcome="supervisores" /></li>
+						<li><h:link value="Consultores" outcome="consultores" /></li>
+						<li><h:link value="Back Office" outcome="backoffices" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Usuários" outcome="usuarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Gerentes</h2>
+					<h:form id="frmFuncionario">
+						<!-- Data table -->
+						<p:dataTable id="funcionariosTable" var="gerente"
+							value="#{gerenteBean.gerentes}" paginator="true"
+							emptyMessage="Nenhum gerente cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;">
+
+							<p:column headerText="Nome" sortBy="#{gerente.nome}">
+								<h:outputText value="#{gerente.nome}" />
+							</p:column>
+							<p:column headerText="Sobrenome">
+								<h:outputText value="#{gerente.sobrenome}" style="width:120px;" />
+							</p:column>
+							<p:column headerText="Sexo">
+								<h:outputText value="#{gerente.sexo}" style="width:120px;" />
+							</p:column>
+							<p:column headerText="Data de Admissão"
+								sortBy="#{gerente.dataAdmissao}" style="width:220px;">
+								<h:outputText value="#{gerente.dataAdmissao}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

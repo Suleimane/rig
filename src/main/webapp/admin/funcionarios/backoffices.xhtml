@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Funcionários</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{backOfficeBean.listarBackoffices}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Funcionáros" outcome="funcionarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Gerentes" outcome="gerentes" /></li>
+						<li><h:link value="Supervisores" outcome="supervisores" /></li>
+						<li><h:link value="Consultores" outcome="consultores" /></li>
+						<li class="active"><h:link value="Back Office"
+								outcome="backoffices" style="background: #00796b;" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Usuários" outcome="usuarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Back Office</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmFuncionario">
+						<!-- Data table -->
+						<p:dataTable id="funcionariosTable" var="backoffice"
+							value="#{backOfficeBean.backOffices}" paginator="true"
+							emptyMessage="Nenhum back office cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;">
+
+							<p:column headerText="Nome" sortBy="#{backoffice.nome}">
+								<h:outputText value="#{backoffice.nome}" />
+							</p:column>
+							<p:column headerText="Sobrenome">
+								<h:outputText value="#{backoffice.sobrenome}"
+									style="width:120px;" />
+							</p:column>
+							<p:column headerText="Sexo">
+								<h:outputText value="#{backoffice.sexo}" style="width:120px;" />
+							</p:column>
+							<p:column headerText="Data de Admissão"
+								sortBy="#{backoffice.dataAdmissao}" style="width:220px;">
+								<h:outputText value="#{backoffice.dataAdmissao}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

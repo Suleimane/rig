@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Funcionários</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{usuarioBean.listarUsuarios}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li class="active"><h:link value="Usuários"
+								outcome="usuarios" style="background: #00796b;" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Usuários</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmFuncionario">
+						<p:messages id="msgs" closable="true" />
+						<!-- Toolbar -->
+						<p:toolbar id="funcionariosToolbar">
+							<f:facet name="left">
+								<p:commandButton value="Novo Usuário"
+									action="#{usuarioBean.preparaCadastro}"
+									oncomplete="PF('edicaoFuncionario').show()"
+									icon="ui-icon-document" process="@this"
+									update="funcionarioDialog">
+									<p:resetInput target="funcionarioDialog" />
+								</p:commandButton>
+
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+
+								<p:commandButton icon="ui-icon-pencil" title="Editar"
+									disabled="#{usuarioBean.funcionarioSelecionado == null}"
+									process="@this" update="usuarioDialog"
+									oncomplete="PF('edicaoUsuario').show()">
+									<p:resetInput target="usuarioDialog" />
+									<f:setPropertyActionListener
+										value="#{usuarioBean.funcionarioSelecionado}"
+										target="#{usuarioBean.usuario}" />
+								</p:commandButton>
+
+								<p:commandButton icon="ui-icon-trash" title="Excluir"
+									process="@this" update="excluir-funcionario-dialog"
+									disabled="#{usuarioBean.funcionarioSelecionado == null}"
+									oncomplete="PF('exclusaoFuncionario').show()">
+								</p:commandButton>
+							</f:facet>
+						</p:toolbar>
+						<!-- Data table -->
+						<p:dataTable id="funcionariosTable" var="usuario"
+							value="#{usuarioBean.usuarios}" paginator="true"
+							emptyMessage="Nenhum gerente cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;"
+							selection="#{usuarioBean.funcionarioSelecionado}"
+							selectionMode="single" rowKey="#{usuario.id}">
+
+							<p:ajax event="rowSelect"
+								update=":frmFuncionario:funcionariosToolbar" />
+							<p:ajax event="rowUnselect"
+								update=":frmFuncionario:funcionariosToolbar" />
+
+							<p:column headerText="Nome" sortBy="#{usuario.funcionario.nome}">
+								<h:outputText value="#{usuario.funcionario.nome}" />
+							</p:column>
+							<p:column headerText="Sobrenome">
+								<h:outputText value="#{usuario.funcionario.sobrenome}" style="width:200px;" />
+							</p:column>
+							<p:column headerText="E-mail">
+								<h:outputText value="#{usuario.email}" style="width:120px;" />
+							</p:column>
+							<p:column headerText="Status" sortBy="#{usuario.status}"
+								style="width:220px;">
+								<h:outputText value="#{usuario.status == true ? 'Inativo' : 'Ativo'}"/>
+							</p:column>
+						</p:dataTable>
+						<!-- Dialog cadastro -->
+						<p:dialog header="Cadastro de Usuário" id="funcionarioDialog"
+							widgetVar="edicaoFuncionario" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarFuncionario"
+								scope="funcionarioDialog" />
+							<p:messages id="msgs-dialog" closable="true" />
+							<p:panelGrid columns="2" id="funcionario-painel">
+								<p:outputLabel id="funcUsuario" value="Funcionários" />
+								<p:selectOneMenu value="#{usuarioBean.usuario.funcionario}"
+									converter="entityConverter">
+									<f:selectItem itemLabel="Selecione funcionáio"
+										noSelectionOption="true" />
+									<f:selectItems value="#{usuarioBean.funcionarios}"
+										var="funcionario" itemValue="#{funcionario}"
+										itemLabel="#{funcionario.nome}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="email" value="E-mail" />
+								<p:inputText id="email" value="#{usuarioBean.usuario.email}"
+									size="50" />
+								<p:outputLabel for="senha" value="Senha" />
+								<p:password id="senha" value="#{usuarioBean.usuario.senha}"
+									size="50" />
+								<p:outputLabel id="status" value="Status"/>
+								<p:selectOneMenu value="#{usuarioBean.usuario.status}">
+								   <f:selectItem itemLabel="Ativo" itemValue="false"/>
+								   <f:selectItem itemLabel="Inativo" itemValue="true"/>
+								</p:selectOneMenu>
+								<p:commandButton value="Salvar" action="#{usuarioBean.salvar}"
+									id="salvarFuncionario" process="funcionarioDialog"
+									update="funcionario-painel msgs-dialog"
+									oncomplete="if(!args.validationFailed) PF('edicaoFuncionario').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Dialog cadastro -->
+						<p:dialog header="Edição de Usuário" id="usuarioDialog"
+							widgetVar="edicaoUsuario" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="editarFuncionario"
+								scope="usuarioDialog" />
+							<p:messages id="msgs-user-dialog" closable="true" />
+							<p:panelGrid columns="2" id="usuario-painel">
+								<p:outputLabel id="usuarioFuncionario" value="Funcionários" />
+								<p:selectOneMenu value="#{usuarioBean.usuario.funcionario}"
+									converter="entityConverter" disabled="true">
+									<f:selectItem itemLabel="Selecione funcionáio"
+										noSelectionOption="true" />
+									<f:selectItems value="#{usuarioBean.usuarios}"
+										var="usuario" itemValue="#{usuario.funcionario}"
+										itemLabel="#{usuario.funcionario.nome}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="editEmail" value="E-mail" />
+								<p:inputText id="editEmail" value="#{usuarioBean.usuario.email}"
+									size="50" />
+								<p:outputLabel for="editSenha" value="Senha" />
+								<p:inputText id="editSenha" value="#{usuarioBean.usuario.senha}"
+									size="50" />
+								<p:outputLabel id="editStatus" value="Status"/>
+								<p:selectOneMenu value="#{usuarioBean.usuario.status}">
+								   <f:selectItem itemLabel="Ativo" itemValue="false"/>
+								   <f:selectItem itemLabel="Inativo" itemValue="true"/>
+								</p:selectOneMenu>
+								<p:commandButton value="Salvar" action="#{usuarioBean.salvar}"
+									id="editarFuncionario" process="usuarioDialog"
+									update="usuario-painel msgs-user-dialog"
+									oncomplete="if(!args.validationFailed) PF('edicaoUsuario').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Dialog confirma exclusão -->
+						<p:dialog header="Confirma exclusão"
+							id="excluir-funcionario-dialog" widgetVar="exclusaoFuncionario"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:button icon="ui-icon-alert" />
+							<h5>
+								Deseja realmente excluir a conta de Usuário: <b>#{usuarioBean.funcionarioSelecionado.funcionario.nome}
+									?</b>
+							</h5>
+							<br />
+							<p:commandButton action="#{usuarioBean.excluir}" process="@this"
+								value="Sim" update="funcionariosTable msgs funcionariosToolbar"
+								oncomplete="PF('exclusaoFuncionario').hide()" />
+
+							<p:commandButton process="@this" value="Não"
+								oncomplete="PF('exclusaoFuncionario').hide()"
+								update="funcionariosTable msgs funcionariosToolbar" />
+
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

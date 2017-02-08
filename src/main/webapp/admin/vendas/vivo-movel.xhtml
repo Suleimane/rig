@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Vendas</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{vendaMovelBean.listarVendasMovel}" />
+		<f:viewAction action="#{consultorBean.listarConsultores}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li class="active"><h:link value="Vivo Móvel"
+								outcome="vivo-movel" style="background: #00796b;" /></li>
+						<li><h:link value="FND" outcome="vivo-fibra" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Vendas - Vivo Móvel</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmVivoMovel">
+						<p:messages id="msgs" closable="true" />
+						<!-- ToolBar -->
+						<p:toolbar id="vendaMovelToolbar">
+							<f:facet name="left">
+								<p:commandButton value="Nova Venda"
+									action="#{vendaMovelBean.preparaCadastro}"
+									icon="ui-icon-document" process="@this"
+									update="vendaMovelDialog"
+									oncomplete="PF('edicaoVendaMovel').show()">
+								</p:commandButton>
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+								<p:commandButton icon="ui-icon-pencil" title="Editar"
+									disabled="#{vendaMovelBean.vendaMovelSelecionada == null}"
+									process="@this" update="vendaMovelDialog"
+									oncomplete="PF('edicaoVendaMovel').show()">
+									<f:setPropertyActionListener
+										value="#{vendaMovelBean.vendaMovelSelecionada}"
+										target="#{vendaMovelBean.vendaMovel}" />
+								</p:commandButton>
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+								<p:commandButton icon="ui-icon-trash" title="Excluir"
+									process="@this" update="excluir-vendaMovel-dialog"
+									disabled="#{vendaMovelBean.vendaMovelSelecionada == null}"
+									oncomplete="PF('exclusaoVendaMovel').show()">
+								</p:commandButton>
+							</f:facet>
+						</p:toolbar>
+						<!-- Data Table -->
+						<p:dataTable value="#{vendaMovelBean.vendasMovel}"
+							var="vendaMovel" paginator="true" id="vendaMovelTable"
+							emptyMessage="Nenhuma venda cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;"
+							selection="#{vendaMovelBean.vendaMovelSelecionada}"
+							selectionMode="single" rowKey="#{vendaMovel.id}">
+
+							<p:ajax event="rowSelect"
+								update=":frmVivoMovel:vendaMovelToolbar" />
+							<p:ajax event="rowUnselect"
+								update=":frmVivoMovel:vendaMovelToolbar" />
+
+							<p:column headerText="Consultor"
+								sortBy="#{vendaMovel.consultor.funcionario.nome}">
+								<h:outputText value="#{vendaMovel.consultor.funcionario.nome}" />
+							</p:column>
+
+							<p:column headerText="Cliente"
+								sortBy="#{vendaMovel.nomeCompleto}">
+								<h:outputText value="#{vendaMovel.nomeCompleto}" />
+							</p:column>
+							<p:column headerText="CPF">
+								<h:outputText value="#{vendaMovel.cpf}" />
+							</p:column>
+							<p:column headerText="Contato">
+								<h:outputText value="#{vendaMovel.celular1}" />
+							</p:column>
+
+							<p:column headerText="Data" sortBy="#{vendaMovel.data}">
+								<h:outputText value="#{vendaMovel.data}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+
+						</p:dataTable>
+						<!-- Dialog -->
+						<p:dialog header="Cadastro de Vendas" id="vendaMovelDialog"
+							widgetVar="edicaoVendaMovel" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarVendaMovel"
+								scope="vendaMovelDialog" />
+							<p:messages id="msgs-dialog" closable="true" />
+							<p:tabView id="tabVendaMovel">
+								<p:tab title="Dados de Cliente">
+									<p:panelGrid columns="2">
+										<p:outputLabel for="nomeCompleto" value="Nome Completo" />
+										<p:inputText id="nomeCompleto"
+											value="#{vendaMovelBean.vendaMovel.nomeCompleto}" size="65" />
+										<p:outputLabel for="cpf" value="CPF" />
+										<p:inputText id="cpf" value="#{vendaMovelBean.vendaMovel.cpf}"
+											size="40" />
+										<p:outputLabel for="celular1" value="Celular 1" />
+										<p:inputText id="celular1"
+											value="#{vendaMovelBean.vendaMovel.celular1}" size="40" />
+										<p:outputLabel for="celular2" value="Celular 2" />
+										<p:inputText id="celular2"
+											value="#{vendaMovelBean.vendaMovel.celular2}" size="40" />
+										<p:outputLabel for="cidade" value="Cidade" />
+										<p:inputText id="cidade"
+											value="#{vendaMovelBean.vendaMovel.cidade}" size="65" />
+										<p:outputLabel value="Data" />
+										<p:calendar value="#{vendaMovelBean.vendaMovel.data}"
+											pattern="dd/MM/yyyy" />
+										<p:outputLabel for="vencimento" value="Vencimento" />
+										<p:inputText id="vencimento"
+											value="#{vendaMovelBean.vendaMovel.vencimento}" />
+										<p:outputLabel for="checklist" value="Check List" />
+										<p:inputText id="checklist"
+											value="#{vendaMovelBean.vendaMovel.cheklist}" />
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Dados da Venda">
+									<p:panelGrid columns="2">
+										<p:outputLabel value="Consultor" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.consultor}"
+											converter="entityConverter">
+											<f:selectItem itemLabel="Selecione consultor.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{consultorBean.consultores}"
+												var="consultor" itemValue="#{consultor}"
+												itemLabel="#{consultor.funcionario.nome}" />
+											<p:ajax update="supervisor"
+												listener="#{supervisorBean.carregarSupervisor}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Supervisor" for="supervisor" />
+										<p:selectOneMenu id="supervisor"
+											value="#{vendaMovelBean.vendaMovel.supervisor}"
+											converter="entityConverter" filterMatchMode="contains">
+											<f:selectItems
+												value="#{supervisorBean.supervisoresConsultor}"
+												var="supervisor" itemValue="#{supervisor}"
+												itemLabel="#{supervisor.funcionario.nome}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Análise de crédito" />
+										<p:selectOneMenu value="#{vendaMovelBean.vendaMovel.credito}">
+											<f:selectItem itemLabel="Selecione.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaMovelBean.creditoMovel}"
+												var="creditoMovel" itemLabel="#{creditoMovel.descricao}"
+												itemValue="#{creditoMovel}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Tipo de Habilitação" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.tipoHabilitacao}">
+											<f:selectItem itemLabel="Selecione.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaMovelBean.tipoHabilitacao}"
+												var="tipoHabilitacao"
+												itemLabel="#{tipoHabilitacao.descricao}"
+												itemValue="#{tipoHabilitacao}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="numero" value="Número" />
+										<p:inputText id="numero"
+											value="#{vendaMovelBean.vendaMovel.numero}" />
+										<p:outputLabel value="Plano" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.planoMovel}">
+											<f:selectItem itemLabel="Selecione.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaMovelBean.planoMovel}"
+												var="planoMovel" itemValue="#{planoMovel}"
+												itemLabel="#{planoMovel}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Plano de Voz" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.planoVozMovel}">
+											<f:selectItem itemLabel="Selecione.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaMovelBean.planoVozMovel}"
+												var="planoVozMovel" itemValue="#{planoVozMovel}"
+												itemLabel="#{planoVozMovel.descricao}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Plano de dados" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.planoDadosMovel}">
+											<f:selectItem itemLabel="Selecione.." />
+											<f:selectItems value="#{vendaMovelBean.planoDadosMovel}"
+												var="planoDadosMovel" itemValue="#{planoDadosMovel}"
+												itemLabel="#{planoDadosMovel.descricao}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Forma de Pagamento" />
+										<p:selectOneMenu
+											value="#{vendaMovelBean.vendaMovel.formaDePagamento}">
+											<f:selectItem itemLabel="Selecione.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaMovelBean.formaDePagamento}"
+												var="formaDePagamento"
+												itemLabel="#{formaDePagamento.descricao}"
+												itemValue="#{formaDePagamento}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="valor" value="Valor" />
+										<p:inputText id="valor"
+											value="#{vendaMovelBean.vendaMovel.valor}" size="65" />
+										<p:outputLabel for="vivoged" value="Vivo GED" />
+										<p:inputText id="vivoged"
+											value="#{vendaMovelBean.vendaMovel.vivoged}" />
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Observação">
+									<p:panelGrid columns="1">
+										<p:inputTextarea cols="70" rows="15"
+											value="#{vendaMovelBean.vendaMovel.observacao}" />
+									</p:panelGrid>
+								</p:tab>
+							</p:tabView>
+							<p:commandButton value="Salvar" action="#{vendaMovelBean.salvar}"
+								id="salvarVendaMovel" process="vendaMovelDialog"
+								update="tabVendaMovel msgs-dialog"
+								oncomplete="if(!args.validationFailed) PF('edicaoVendaMovel').hide()" />
+						</p:dialog>
+						<!-- Dialog confirma exclusão -->
+						<p:dialog header="Confirma exclusão"
+							id="excluir-vendaMovel-dialog" widgetVar="exclusaoVendaMovel"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:button icon="ui-icon-alert" />
+							<h5>
+								Deseja excluir venda de cliente: <b>#{vendaMovelBean.vendaMovelSelecionada.nomeCompleto}
+									?</b>
+							</h5>
+							<br />
+							<p:commandButton action="#{vendaMovelBean.excluir}"
+								process="@this" value="Sim"
+								update="vendaMovelTable msgs vendaMovelToolbar"
+								oncomplete="PF('exclusaoVendaMovel').hide()" />
+
+							<p:commandButton process="@this" value="Não"
+								oncomplete="PF('exclusaoVendaMovel').hide()"
+								update="vendaMovelTable msgs vendaMovelToolbar" />
+
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

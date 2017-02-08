@@ -1,0 +1,95 @@
+/*
+* @Autor: Suleimane Manuel Nanque
+*/
+*{font: 14px arial; padding: 0; margin: 0;}
+
+/* LAYOUT PADRÃO
+-------------------------------------------------- */
+body{margin: 0; padding: 0;}
+.navbar{margin: 0; padding: 0; border: 0;}
+.navbar .navbar-default{margin: 0; padding: 0; width: 100%; border: 0;}
+.navbar .container-fluid{background-color: #00796b; border: 0;}
+.navbar .container-fluid a{color: #fafafa;}
+.navbar .container-fluid .navbar-right a{color: #fafafa;}
+.navbar .container-fluid a:hover{color: #ffffff;}
+.navbar .container-fluid .navbar-right a:hover{color: #ffffff;}
+.navbar .container-fluid .navbar-right .dropdown-menu a{color: #000000;}
+.loading{float: right; margin-top: -45px;}
+.bkg-active{background: #00796b;}
+
+/* PAGINA PRINCIPAL
+-------------------------------------------------- */
+.icon-menus{margin-top: 75px; overflow-x: hidden}
+.icon-menus .col-lg-4{margin-top: 5px; padding-top:10px; padding-bottom: 5px;}
+.icon-menus .col-lg-4:HOVER{background-color: #fafafa;}
+.icon-menus .col-lg-4 img{width: 120px; height: 120px;}
+.icon-menus .col-lg-4 h2 a{font-size: 18px; color: #222222;}
+.title-grafico-dash{background: #00796b; color: #fafafa;}
+
+/* PAGINA FUNCIONÁRIOS
+-------------------------------------------------- */
+.sub-header {padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.navbar-fixed-top {border: 0;}
+.nav-sidebar > li > a{color: #222;}
+
+.sidebar {display: none;}
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+}
+.nav-sidebar {margin-right: -21px; margin-bottom: 20px; margin-left: -20px;}
+.nav-sidebar > li > a {padding-right: 20px; padding-left: 20px;}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+.main {padding: 20px;}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {margin-top: 0;}
+.placeholders {margin-bottom: 30px; text-align: center;}
+.placeholders h4 {margin-bottom: 0;}
+.placeholder {margin-bottom: 20px;}
+.placeholder img {display: inline-block;border-radius: 50%;}
+
+/* RODAPÉ
+-------------------------------------------------- */
+.footer {bottom: 0; width: 100%; height: 40px; background-color: #eeeeee; border-top: 1px solid #ddd; padding-top: 8px;}
+.container .text-muted {text-align: center;}
+.footer > .container {}
+code {font-size: 80%;}
+
+/* CUSTOM PRIME FACES
+----------------------------------------------------*/
+.ui-widget-content{border:  none !important;}
+.ui-panelgrid-cell{border: none !important;}
+.gridcell{border:  none !important;}
+ .ui-selectonemenu{ width: 80% !important;} 
+ .ui-selectonemenu-label{ width: 100% !important;}
+ .ui-inputtext{width: 80% !important;}
+ .ui-inputfield{width: 80% !important;}
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+@-webkit-viewport { width: device-width; }
+@-moz-viewport    { width: device-width; }
+@-ms-viewport     { width: device-width; }
+@-o-viewport      { width: device-width; }
+@viewport         { width: device-width; }

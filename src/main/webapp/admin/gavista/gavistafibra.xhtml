@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG</ui:define>
+	<ui:define name="body">
+		<div class="container-fluid icon-menus" align="center">
+			<div class="row" style="margin-bottom: 10px; margin-top: -10px;">
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">vendas do dia</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="metergauge"
+								model="#{velVendasDia.meterGaugeModel1}"
+								style="width:400px;height:250px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">vendas do mês</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="metergauge"
+								model="#{velVendasDia.meterGaugeModel1}"
+								style="width:400px;height:250px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">cancelamento</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="metergauge"
+								model="#{velVendasDia.meterGaugeModel1}"
+								style="width:400px;height:250px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">vendas x meta</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="line" model="#{graficoVendasMeta.lineModel2}"
+								style="height:300px;" responsive="true" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">gestão á vista</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+						 <table>
+						   <tr>
+						    <td>Supervisor</td>
+						    <td>Consultor1</td>
+						   </tr>
+						 </table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

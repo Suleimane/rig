@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG</ui:define>
+	<ui:define name="body">
+		<div class="container-fluid icon-menus" align="center">
+			<div class="row" style="margin-bottom: 10px;">
+				<div class="col-lg-3">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">mix voz fibra</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixFibra.chartVoz}"
+								style="width:300px;height:300px"></p:chart>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">mix dados fibra</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixFibra.chartVoz}"
+								style="width:300px;height:300px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">mix tv fibra</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixFibra.chartVoz}"
+								style="width:300px;height:300px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">tkup</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixFibra.chartVoz}"
+								style="width:300px;height:300px" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">plano móvel</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixMovel.chartModelPlano}"
+								style="widht:400px; height:300px;" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">mix voz móvel</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixMovel.chartModelVoz}"
+								style="widht:400px; height:300px;" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">mix dados móvel</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="pie" model="#{graficoMixMovel.chartModelDados}"
+								style="widht:400px; height:300px;" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">vendas vivo fibra</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="bar" model="#{graficoAnualFibra.barChartModel}"
+								style="height: 220px;" responsive="true" />
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="panel panel-success">
+						<div class="panel-heading"
+							style="background: #00796b; color: #fafafa;">
+							<h3 class="panel-title">vendas vivo móvel</h3>
+						</div>
+						<div class="panel-body" style="padding: 0;">
+							<p:chart type="bar" model="#{graficoAnualMovel.barChartModel}"
+								style="height: 220px;" responsive="true" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /.row -->
+		</div>
+		<h:form>
+			<p:commandLink />
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Funcionários</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{funcionarioBean.listaFuncionarios}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li class="active"><h:link value="Funcionáros"
+								outcome="funcionarios" style="background: #00796b;" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Gerentes" outcome="gerentes" /></li>
+						<li><h:link value="Supervisores" outcome="supervisores" /></li>
+						<li><h:link value="Consultores" outcome="consultores" /></li>
+						<li><h:link value="Back Office" outcome="backoffices" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Funcionários</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmFuncionario">
+						<p:messages id="msgs" closable="true" />
+						<!-- Toolbar -->
+						<p:toolbar id="funcionariosToolbar">
+							<f:facet name="left">
+								<p:commandButton value="Novo Funcionário"
+									action="#{funcionarioBean.preparaCadastro}"
+									oncomplete="PF('edicaoFuncionario').show()"
+									icon="ui-icon-document" process="@this"
+									update="funcionarioDialog">
+									<p:resetInput target="funcionarioDialog" />
+								</p:commandButton>
+
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+
+								<p:commandButton icon="ui-icon-pencil" title="Editar"
+									disabled="#{funcionarioBean.funcionarioSelecionado == null}"
+									process="@this" update="funcionarioDialog"
+									oncomplete="PF('edicaoFuncionario').show()">
+									<p:resetInput target="funcionarioDialog" />
+									<f:setPropertyActionListener
+										value="#{funcionarioBean.funcionarioSelecionado}"
+										target="#{funcionarioBean.funcionario}" />
+								</p:commandButton>
+
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+
+								<p:commandButton value="Demitir" icon="ui-icon-document"
+									process="@this" update="demitir-funcionario-dialog"
+									disabled="#{funcionarioBean.funcionarioSelecionado == null}"
+									oncomplete="PF('demitirFuncionario').show()">
+									<p:resetInput target="demitir-funcionario-dialog" />
+									<f:setPropertyActionListener
+										value="#{funcionarioBean.funcionarioSelecionado}"
+										target="#{funcionarioBean.funcionario}" />
+								</p:commandButton>
+
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+
+								<p:commandButton icon="ui-icon-trash" title="Excluir"
+									process="@this" update="excluir-funcionario-dialog"
+									disabled="#{funcionarioBean.funcionarioSelecionado == null}"
+									oncomplete="PF('exclusaoFuncionario').show()">
+								</p:commandButton>
+							</f:facet>
+							<f:facet name="right">
+								<p:inputText size="30" id="pesquisarFuncionario"
+									placeholder="Pesquisar.."
+									value="#{funcionarioBean.filter.nome}" />
+								<p:commandButton icon="ui-icon-search"
+									process="@this pesquisarFuncionario" update="funcionariosTable"
+									action="#{funcionarioBean.pesquisarFuncionario}" />
+							</f:facet>
+						</p:toolbar>
+						<!-- Data table -->
+						<p:dataTable id="funcionariosTable" var="funcionario"
+							value="#{funcionarioBean.funcionarios}" paginator="true"
+							emptyMessage="Nenhum consultor cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;"
+							selection="#{funcionarioBean.funcionarioSelecionado}"
+							selectionMode="single" rowKey="#{funcionario.id}">
+
+							<p:ajax event="rowSelect"
+								update=":frmFuncionario:funcionariosToolbar" />
+							<p:ajax event="rowUnselect"
+								update=":frmFuncionario:funcionariosToolbar" />
+
+							<p:column headerText="Nome" sortBy="#{funcionario.nome}">
+								<h:outputText value="#{funcionario.nome}" />
+							</p:column>
+							<p:column headerText="Sobrenome">
+								<h:outputText value="#{funcionario.sobrenome}"
+									style="width:120px;" />
+							</p:column>
+							<p:column headerText="Cargo" sortBy="#{funcionario.cargo}">
+							   <h:outputText value="#{funcionario.cargo.descricao}"/>
+							</p:column>
+							<p:column headerText="Sexo">
+								<h:outputText value="#{funcionario.sexo}" style="width:120px;" />
+							</p:column>
+							<p:column headerText="Data de Admissão"
+								sortBy="#{funcionario.dataAdmissao}" style="width:220px;">
+								<h:outputText value="#{funcionario.dataAdmissao}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+						<!-- Dialog cadastro -->
+						<p:dialog header="Cadastro de Funcionário" id="funcionarioDialog"
+							widgetVar="edicaoFuncionario" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarFuncionario"
+								scope="funcionarioDialog" />
+							<p:messages id="msgs-dialog" closable="true" />
+							<p:panelGrid columns="2" id="funcionario-painel">
+								<p:outputLabel for="sexo" value="Sexo " />
+								<p:selectOneButton id="sexo"
+									value="#{funcionarioBean.funcionario.sexo}" label="Sexo"
+									required="true">
+									<f:selectItems value="#{funcionarioBean.sexo}" var="sexo"
+										itemValue="#{sexo}" itemLabel="#{sexo.descricao}" />
+								</p:selectOneButton>
+								<p:outputLabel for="nomeFuncionario" value="Nome" />
+								<p:inputText id="nomeFuncionario"
+									value="#{funcionarioBean.funcionario.nome}" size="65" />
+								<p:outputLabel for="sobreNome" value="Sobrenome" />
+								<p:inputText id="sobreNome"
+									value="#{funcionarioBean.funcionario.sobrenome}" size="65" />
+								<p:outputLabel value="Área" />
+								<p:selectOneMenu value="#{funcionarioBean.funcionario.area}">
+									<f:selectItem itemLabel="Selecione.." noSelectionOption="true" />
+									<f:selectItems value="#{funcionarioBean.area}" var="area"
+										itemLabel="#{area.descricao}" itemValue="#{area}" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Cargo"/>
+								<p:selectOneMenu value="#{funcionarioBean.funcionario.cargo}">
+								 <f:selectItem itemLabel="Selecione.." noSelectionOption="true"/>
+								 <f:selectItems value="#{funcionarioBean.cargos}" var="cargo" itemLabel="#{cargo.descricao}" itemValue="#{cargo}"/>
+								</p:selectOneMenu>
+								<p:outputLabel for="dataAdmissao" value="Data de Admissão" />
+								<p:calendar id="dataAdmissao"
+									value="#{funcionarioBean.funcionario.dataAdmissao}"
+									pattern="dd/MM/yyyy" />
+								<p:commandButton value="Salvar"
+									action="#{funcionarioBean.salvar}" id="salvarFuncionario"
+									process="funcionarioDialog"
+									update="funcionario-painel msgs-dialog"
+									oncomplete="if(!args.validationFailed) PF('edicaoFuncionario').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Demitir funcionário -->
+						<p:dialog header="Demitir funcionário"
+							id="demitir-funcionario-dialog" widgetVar="demitirFuncionario"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:messages id="demitir-msg" />
+							<p:panelGrid columns="2" id="demitir-painel">
+								<p:outputLabel for="dimitirSexo" value="Sexo" />
+								<p:inputText id="dimitirSexo"
+									value="#{funcionarioBean.funcionario.sexo}" readonly="true"
+									size="45" />
+								<p:outputLabel for="dimitirNome" value="Nome" />
+								<p:inputText id="dimitirNome"
+									value="#{funcionarioBean.funcionario.nome}" readonly="true"
+									size="45" />
+								<p:outputLabel for="dimitirSobrenome" value="Sobrenome" />
+								<p:inputText id="dimitirSobrenome"
+									value="#{funcionarioBean.funcionario.sobrenome}"
+									readonly="true" size="45" />
+								<p:outputLabel for="demitirDataAdmissao"
+									value="Data de Admissão" />
+								<p:inputText id="demitirDataAdmissao"
+									value="#{funcionarioBean.funcionario.dataAdmissao}"
+									readonly="true" size="30">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</p:inputText>
+								<p:outputLabel for="dataDmissao" value="Data de Demissão" />
+								<p:calendar id="dataDmissao"
+									value="#{funcionarioBean.funcionario.dataDemissao}"
+									pattern="dd/MM/yyyy" required="true" />
+								<p:commandButton value="Demitir"
+									action="#{funcionarioBean.salvar}" id="demitirFuncionario"
+									process="demitir-funcionario-dialog"
+									update="demitir-painel demitir-msg"
+									oncomplete="if(!args.validationFailed) PF('edicaoFuncionario').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Dialog confirma exclusão -->
+						<p:dialog header="Confirma exclusão"
+							id="excluir-funcionario-dialog" widgetVar="exclusaoFuncionario"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:button icon="ui-icon-alert" />
+							<h5>
+								Deseja realmente excluir funcionário: <b>#{funcionarioBean.funcionarioSelecionado.nome}
+									?</b>
+							</h5>
+							<br />
+							<p:commandButton action="#{funcionarioBean.excluir}"
+								process="@this" value="Sim"
+								update="funcionariosTable msgs funcionariosToolbar"
+								oncomplete="PF('exclusaoFuncionario').hide()" />
+
+							<p:commandButton process="@this" value="Não"
+								oncomplete="PF('exclusaoFuncionario').hide()"
+								update="funcionariosTable msgs funcionariosToolbar" />
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

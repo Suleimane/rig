@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Funcionários</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{supervisorBean.listarSupervisores}" />
+		<f:viewAction action="#{gerenteBean.listarGerentes}" />
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Funcionáros" outcome="funcionarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Gerentes" outcome="gerentes" /></li>
+						<li class="active"><h:link value="Supervisores"
+								outcome="supervisores" style="background: #00796b;" /></li>
+						<li><h:link value="Consultores" outcome="consultores" /></li>
+						<li><h:link value="Back Office" outcome="backoffices" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Usuários" outcome="usuarios" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Supervisores</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmFuncionario">
+						<p:messages id="msgs" closable="true" />
+						<!-- Toolbar -->
+						<p:toolbar id="funcionariosToolbar">
+							<f:facet name="left">
+								<p:commandButton value="Add Metas"
+									action="#{supervisorBean.preparaCadastro}"
+									oncomplete="PF('edicaoFuncionario').show()"
+									icon="ui-icon-document" process="@this"
+									update="funcionarioDialog">
+									<p:resetInput target="funcionarioDialog" />
+								</p:commandButton>
+
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+
+								<p:commandButton icon="ui-icon-pencil" title="Editar"
+									disabled="#{supervisorBean.funcionarioSelecionado == null}"
+									process="@this" update="supervisorDialog"
+									oncomplete="PF('edicaoSupervisor').show()">
+									<p:resetInput target="supervisorDialog" />
+									<f:setPropertyActionListener
+										value="#{supervisorBean.funcionarioSelecionado}"
+										target="#{supervisorBean.supervisor}" />
+								</p:commandButton>
+
+								<!--  <p:commandButton icon="ui-icon-trash" title="Excluir"
+									process="@this" update="excluir-funcionario-dialog"
+									disabled="#{supervisorBean.funcionarioSelecionado == null}"
+									oncomplete="PF('exclusaoFuncionario').show()">
+								</p:commandButton>-->
+							</f:facet>
+						</p:toolbar>
+						<!-- Data table -->
+						<p:dataTable id="funcionariosTable" var="supervisor"
+							value="#{supervisorBean.supervisores}" paginator="true"
+							emptyMessage="Nenhum gerente cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;"
+							selection="#{supervisorBean.funcionarioSelecionado}"
+							selectionMode="single" rowKey="#{supervisor.id}">
+
+							<p:ajax event="rowSelect"
+								update=":frmFuncionario:funcionariosToolbar" />
+							<p:ajax event="rowUnselect"
+								update=":frmFuncionario:funcionariosToolbar" />
+
+							<p:column headerText="Nome"
+								sortBy="#{supervisor.funcionario.nome}">
+								<h:outputText value="#{supervisor.funcionario.nome}" />
+							</p:column>
+							<p:column headerText="Sobrenome">
+								<h:outputText value="#{supervisor.funcionario.sobrenome}"
+									style="width:120px;" />
+							</p:column>
+							<p:column headerText="Meta diária">
+								<h:outputText value="#{supervisor.metaDiaria}"
+									style="width:120px;" />
+							</p:column>
+							<p:column headerText="Meta do mês">
+								<h:outputText value="#{supervisor.metaDoMes}"
+									style="width:120px;" />
+							</p:column>
+							<p:column headerText="Gestor" style="width:220px;">
+								<h:outputText value="#{supervisor.gerente.nome}" />
+							</p:column>
+						</p:dataTable>
+						<!-- Dialog cadastro -->
+						<p:dialog header="Cadastro de Meta de Supervisor" id="funcionarioDialog"
+							widgetVar="edicaoFuncionario" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarFuncionario"
+								scope="funcionarioDialog" />
+							<p:messages id="msgs-dialog" closable="true" />
+							<p:panelGrid columns="2" id="funcionario-painel">
+								<p:outputLabel for="supervisor" value="Supervisor" />
+								<p:selectOneMenu id="supervisor"
+									value="#{supervisorBean.supervisor.funcionario}"
+									converter="entityConverter" required="true">
+									<f:selectItem itemLabel="Selecione.." noSelectionOption="true" />
+									<f:selectItems value="#{supervisorBean.funcionarios}"
+										var="funcionario" itemLabel="#{funcionario.nome}"
+										itemValue="#{funcionario}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="gerente" value="Gerente" />
+								<p:selectOneMenu id="gerente"
+									value="#{supervisorBean.supervisor.gerente}"
+									converter="entityConverter">
+									<f:selectItem itemLabel="Selecione gerente.."
+										noSelectionOption="true" />
+									<f:selectItems value="#{gerenteBean.gerentes}" var="gerente"
+										itemValue="#{gerente}" itemLabel="#{gerente.nome}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="metaMes" value="Meta mensal" />
+								<p:inputText id="metaMes"
+									value="#{supervisorBean.supervisor.metaDoMes}" size="65" />
+								<p:outputLabel for="metaDia" value="Meta diária" />
+								<p:inputText id="metaDia"
+									value="#{supervisorBean.supervisor.metaDiaria}" size="65" />
+								<p:commandButton value="Salvar"
+									action="#{supervisorBean.salvar}" id="salvarFuncionario"
+									process="funcionarioDialog"
+									update="funcionario-painel msgs-dialog"
+									oncomplete="if(!args.validationFailed) PF('edicaoFuncionario').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Dialog Edição -->
+						<p:dialog header="Edição de Meta de Supervisor" id="supervisorDialog"
+							widgetVar="edicaoSupervisor" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarFuncionario"
+								scope="supervisorDialog" />
+							<p:messages id="msgs-dialog2" closable="true" />
+							<p:panelGrid columns="2" id="supervisor-painel">
+								<p:outputLabel for="supervisorEdit" value="Supervisor" />
+								<p:selectOneMenu id="supervisorEdit"
+									value="#{supervisorBean.supervisor.funcionario}"
+									converter="entityConverter" disabled="true">
+									<f:selectItem itemLabel="Selecione.." noSelectionOption="true" />
+									<f:selectItems value="#{supervisorBean.supervisores}"
+										var="supervisor" itemLabel="#{supervisor.funcionario.nome}"
+										itemValue="#{supervisor.funcionario}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="gerenteEdit" value="Gerente" />
+								<p:selectOneMenu id="gerenteEdit"
+									value="#{supervisorBean.supervisor.gerente}"
+									converter="entityConverter">
+									<f:selectItem itemLabel="Selecione gerente.."
+										noSelectionOption="true" />
+									<f:selectItems value="#{gerenteBean.gerentes}" var="gerente"
+										itemValue="#{gerente}" itemLabel="#{gerente.nome}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="metaMesEdit" value="Meta mensal" />
+								<p:inputText id="metaMesEdit"
+									value="#{supervisorBean.supervisor.metaDoMes}" size="65" />
+								<p:outputLabel for="metaDiaEdit" value="Meta diária" />
+								<p:inputText id="metaDiaEdit"
+									value="#{supervisorBean.supervisor.metaDiaria}" size="65" />
+								<p:commandButton value="Salvar"
+									action="#{supervisorBean.salvar}" id="salvarSupervisor"
+									process="supervisorDialog"
+									update="supervisor-painel msgs-dialog2"
+									oncomplete="if(!args.validationFailed) PF('edicaoSupervisor').hide()" />
+							</p:panelGrid>
+						</p:dialog>
+						<!-- Dialog confirma exclusão -->
+						<p:dialog header="Confirma exclusão"
+							id="excluir-funcionario-dialog" widgetVar="exclusaoFuncionario"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:button icon="ui-icon-alert" />
+							<h5>
+								Deseja realmente excluir funcionário: <b>#{supervisorBean.funcionarioSelecionado.nome}
+									?</b>
+							</h5>
+							<br />
+							<p:commandButton action="#{supervisorBean.excluir}"
+								process="@this" value="Sim"
+								update="funcionariosTable msgs funcionariosToolbar"
+								oncomplete="PF('exclusaoFuncionario').hide()" />
+
+							<p:commandButton process="@this" value="Não"
+								oncomplete="PF('exclusaoFuncionario').hide()"
+								update="funcionariosTable msgs funcionariosToolbar" />
+
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

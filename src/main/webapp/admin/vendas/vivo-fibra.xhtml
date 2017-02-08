@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/templates/padrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">RIG - Vendas</ui:define>
+	<f:metadata>
+		<f:viewAction action="#{vendaFibraBean.listarVenasFibra}"/>
+		<f:viewAction action="#{supervisorBean.listarSupervisores}"/>
+		<f:viewAction action="#{consultorBean.carregarConsultores}"/>
+	</f:metadata>
+	<ui:define name="body">
+		<div class="container-fluid">
+			<div class="row" style="margin-top: 45px;">
+				<div class="col-sm-3 col-md-2 sidebar">
+					<ul class="nav nav-sidebar">
+						<li class="active"><h:link value="Vivo Fibra"
+								outcome="vivo-fibra" style="background: #00796b;" /></li>
+						<li><h:link value="FND" outcome="vivo-movel" /></li>
+						<li><h:link value="Grau Máximo" outcome="vivo-movel" /></li>
+					</ul>
+					<ul class="nav nav-sidebar">
+						<li><h:link value="Dashboard" outcome="/admin/dashboard" /></li>
+					</ul>
+				</div>
+				<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					<h2 class="sub-header">Vendas - Vivo Fibra</h2>
+					<span class="loading"> <p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage library="images" name="loading.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</span>
+					<h:form id="frmVivoFibra">
+						<p:messages id="msgs" closable="true" />
+						<!-- Toolbar -->
+						<p:toolbar id="vendaToolbar">
+							<f:facet name="left">
+								<p:commandButton value="Nova venda"
+									action="#{vendaFibraBean.preparaCadastro}"
+									icon="ui-icon-document" process="@this" update="vendaDialog"
+									oncomplete="PF('edicaoVenda').show()">
+									<p:resetInput target="vendaDialog" />
+								</p:commandButton>
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+								<p:commandButton icon="ui-icon-pencil" title="Editar"
+									disabled="#{vendaFibraBean.vendaFibraSelecionada == null}"
+									process="@this" update="vendaDialog"
+									oncomplete="PF('edicaoVenda').show()">
+									<f:setPropertyActionListener
+										value="#{vendaFibraBean.vendaFibraSelecionada}"
+										target="#{vendaFibraBean.vendaFibra}" />
+								</p:commandButton>
+								<span class="ui-separator"> <span
+									class="ui-icon ui-icon-grid-dotted-vertical" />
+								</span>
+								<p:commandButton icon="ui-icon-trash" title="Excluir"
+									process="@this" update="excluir-vendaFibra-dialog"
+									disabled="#{vendaFibraBean.vendaFibraSelecionada == null}"
+									oncomplete="PF('exclusaoVendaFibra').show()">
+								</p:commandButton>
+							</f:facet>
+							<f:facet name="right">
+							</f:facet>
+						</p:toolbar>
+						<!-- Data table -->
+						<p:dataTable id="vendasTable" var="venda"
+							value="#{vendaFibraBean.vendasFibra}" paginator="true"
+							emptyMessage="Nenhuma venda cadastrado." rows="10"
+							paginatorPosition="bottom"
+							style="margin-top:10px; text-align:center;"
+							selection="#{vendaFibraBean.vendaFibraSelecionada}"
+							selectionMode="single" rowKey="#{venda.id}">
+
+							<p:ajax event="rowSelect" update=":frmVivoFibra:vendaToolbar" />
+							<p:ajax event="rowUnselect" update=":frmVivoFibra:vendaToolbar" />
+
+							<p:column headerText="Consultor"
+								sortBy="#{venda.consultor.funcionario.nome}">
+								<h:outputText value="#{venda.consultor.funcionario.nome}" />
+							</p:column>
+
+							<p:column headerText="Cliente" sortBy="#{venda.nome}">
+								<h:outputText value="#{venda.nome}" />
+							</p:column>
+							<p:column headerText="CPF">
+								<h:outputText value="#{venda.documentoReceitaFederal}" />
+							</p:column>
+							<p:column headerText="Contato">
+								<h:outputText value="#{venda.celular1}" />
+							</p:column>
+							<p:column headerText="Data" sortBy="#{venda.data}">
+								<h:outputText value="#{venda.data}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+
+						<!-- Dialog cadastro -->
+						<p:dialog header="Cadastro de Vendas" id="vendaDialog"
+							widgetVar="edicaoVenda" resizable="false" modal="true"
+							closeOnEscape="true">
+							<p:defaultCommand target="salvarVenda" scope="vendaDialog" />
+							<p:messages id="msgs-dialog" closable="true" />
+							<p:tabView id="tabVenda">
+								<p:tab title="Dados do Cliente">
+									<p:panelGrid columns="2" id="painelCliente">
+										<p:outputLabel for="cliente" value="Cliente" />
+										<p:inputText id="cliente"
+											value="#{vendaFibraBean.vendaFibra.nome}" size="45" />
+										<p:outputLabel for="solicitante" value="Solicitante" />
+										<p:inputText id="solicitante"
+											value="#{vendaFibraBean.vendaFibra.solicitante}" size="45" />
+										<p:outputLabel for="documento" value="CPF/CNPJ" />
+										<p:inputText id="documento"
+											value="#{vendaFibraBean.vendaFibra.documentoReceitaFederal}" />
+										<p:outputLabel for="celular1" value="Celular1" />
+										<p:inputText id="celular1"
+											value="#{vendaFibraBean.vendaFibra.celular1}" size="35" />
+										<p:outputLabel for="celular2" value="Celular2" />
+										<p:inputText id="celular2"
+											value="#{vendaFibraBean.vendaFibra.celular2}" size="35" />
+										<p:outputLabel for="celular3" value="Celular3" />
+										<p:inputText id="celular3"
+											value="#{vendaFibraBean.vendaFibra.celular3}" size="35" />
+										<p:outputLabel for="checklist" value="Check List" />
+										<p:inputText id="checklist"
+											value="#{vendaFibraBean.vendaFibra.cheklist}" size="60" />
+										<p:outputLabel for="data" value="Data" />
+										<p:calendar id="data"
+											value="#{vendaFibraBean.vendaFibra.data}"
+											pattern="dd/MM/yyyy" />
+										<p:outputLabel value="IQV" />
+										<p:selectOneMenu value="#{vendaFibraBean.vendaFibra.iqv}">
+											<f:selectItem itemLabel="IQV" noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.IQV}" var="iqv"
+												itemValue="#{iqv}" itemLabel="#{iqv.descricao}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Endereço de Instalação">
+									<p:panelGrid columns="2" id="paineEndereco">
+										<p:outputLabel for="cep" value="CEP" />
+										<p:inputText id="cep" value="#{vendaFibraBean.vendaFibra.cep}"
+											size="40" />
+										<p:outputLabel for="cidade" value="Cidade" />
+										<p:inputText id="cidade"
+											value="#{vendaFibraBean.vendaFibra.cidade}" size="40" />
+										<p:outputLabel for="bairro" value="Bairro" />
+										<p:inputText id="bairro"
+											value="#{vendaFibraBean.vendaFibra.bairro}" size="40" />
+										<p:outputLabel for="rua" value="Rua" />
+										<p:inputText id="rua" value="#{vendaFibraBean.vendaFibra.rua}"
+											size="60" />
+										<p:outputLabel for="numero" value="Número" />
+										<p:inputText id="numero"
+											value="#{vendaFibraBean.vendaFibra.numero}" size="40" />
+										<p:outputLabel for="armario" value="Armário" />
+										<p:inputText id="armario"
+											value="#{vendaFibraBean.vendaFibra.armario}" />
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Dados da Venda">
+									<p:panelGrid columns="2" id="painelVenda">
+										<p:outputLabel value="Supervisor" for="supervisor" />
+										<p:selectOneMenu id="supervisor"
+											value="#{vendaFibraBean.vendaFibra.supervisor}"
+											converter="entityConverter" filterMatchMode="contains" filter="true">
+											<f:selectItem itemLabel="Selecione supervisor.."
+												noSelectionOption="true" />
+											<f:selectItems value="#{supervisorBean.supervisores}"
+												var="supervisor" itemValue="#{supervisor}"
+												itemLabel="#{supervisor.funcionario.nome}" />
+											<p:ajax update="consultor"
+												listener="#{consultorBean.carregarConsultores}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Consultor" for="consultor" />
+										<p:selectOneMenu id="consultor"
+											value="#{vendaFibraBean.vendaFibra.consultor}"
+											converter="entityConverter">
+											<f:selectItem itemLabel="Selecione consultor.." noSelectionOption="true"/>
+											<f:selectItems
+												value="#{consultorBean.consultores}"
+												var="consultor" itemLabel="#{consultor.nome}"
+												itemValue="#{consultor}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Analise de crédito" />
+										<p:selectOneMenu value="#{vendaFibraBean.vendaFibra.credito}">
+											<f:selectItem itemLabel="Analise de crédito"
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.credito}"
+												var="credito" itemValue="#{credito}"
+												itemLabel="#{credito.descricao}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Plano de Voz" />
+										<p:selectOneMenu value="#{vendaFibraBean.vendaFibra.planoVoz}">
+											<f:selectItem itemLabel="Plano de voz"
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.planoVoz}"
+												var="planoVoz" itemLabel="#{planoVoz.descricao}"
+												itemValue="#{planoVoz}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Plano de Dados" />
+										<p:selectOneMenu
+											value="#{vendaFibraBean.vendaFibra.planoDados}">
+											<f:selectItem itemLabel="Plano de Dados"
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.planoDados}"
+												var="planoDados" itemLabel="#{planoDados.descricao}"
+												itemValue="#{planoDados}" />
+										</p:selectOneMenu>
+										<p:outputLabel value="Plano de TV" />
+										<p:selectOneMenu value="#{vendaFibraBean.vendaFibra.planosTv}">
+											<f:selectItem itemLabel="Plano de TV"
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.planoTv}"
+												var="planoTv" itemLabel="#{planoTv.descricao}"
+												itemValue="#{planoTv}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="instancia" value="Instância" />
+										<p:inputText id="instancia"
+											value="#{vendaFibraBean.vendaFibra.numeroIstancia}" size="40" />
+										<p:outputLabel value="Forma de pagamento" />
+										<p:selectOneMenu
+											value="#{vendaFibraBean.vendaFibra.formaDePagamento}">
+											<f:selectItem itemLabel="Forma de pagamento"
+												noSelectionOption="true" />
+											<f:selectItems value="#{vendaFibraBean.formaDePagamento}"
+												var="pagamento" itemValue="#{pagamento}"
+												itemLabel="#{pagamento.descricao}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="valor" value="Valor" />
+										<p:inputText id="valor"
+											value="#{vendaFibraBean.vendaFibra.valor}" size="40" />
+
+									</p:panelGrid>
+								</p:tab>
+								<p:tab title="Observação" id="tabObservacao">
+									<p:panelGrid columns="1">
+										<p:inputTextarea cols="70" rows="15"
+											value="#{vendaFibraBean.vendaFibra.observacao}" />
+									</p:panelGrid>
+								</p:tab>
+							</p:tabView>
+							<p:commandButton value="Salvar" action="#{vendaFibraBean.salvar}"
+								id="salvarVenda" process="vendaDialog"
+								update="tabVenda msgs-dialog"
+								oncomplete="if(!args.validationFailed) PF('edicaoVenda').hide()" />
+						</p:dialog>
+						<!-- Dialog confirma exclusão -->
+						<p:dialog header="Confirma exclusão"
+							id="excluir-vendaFibra-dialog" widgetVar="exclusaoVendaFibra"
+							resizable="false" modal="true" closeOnEscape="true">
+							<p:button icon="ui-icon-alert" />
+							<h5>
+								Deseja excluir venda de cliente: <b>#{vendaFibraBean.vendaFibraSelecionada.nome}
+									?</b>
+							</h5>
+							<br />
+							<p:commandButton action="#{vendaFibraBean.excluir}"
+								process="@this" value="Sim"
+								update="vendasTable msgs vendaToolbar"
+								oncomplete="PF('exclusaoVendaFibra').hide()" />
+
+							<p:commandButton process="@this" value="Não"
+								oncomplete="PF('exclusaoVendaFibra').hide()"
+								update="vendasTable msgs vendaToolbar" />
+
+						</p:dialog>
+					</h:form>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
